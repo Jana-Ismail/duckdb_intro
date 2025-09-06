@@ -1,0 +1,96 @@
+# pip-tools for keeping you environment clean
+    pip sync to remove any dependencies you're not using
+
+# dbt is a transformation tool ('data build tool')
+
+# new paradigm we are learning - Mediallion Architecture
+    - Bronze, 'Raw' = raw data
+    - Silver, 'Staging' = cleaned, transformed data
+    - Gold, 'Mart' = business rules applied
+
+# Staging area 
+    - where cleaning, subsetting happens
+    - maybe some light business logic, must mostly data prep
+    - one sql/cleaning file per bronze table
+
+# Data Mart = combined, cleaned, transformed data with business rules applied
+
+****dbt uses profiles.yml file to connect to your data warehouse****
+
+# dbt knows that the names of the .sql files you create in your models/ folder 
+will be the names of the table or view created in your database
+
+# Run terminal command
+    dbt init {name_of_project}
+
+# after running dbt init, you will enter the number 1,
+then your dbt project folder should be created
+    - side note: there is only 1 option for 'duckdb' because the only
+    dbt dependency in requirements.txt is dbt-duckdb
+
+# Go to your Home/User directory in Finder, expose hidden folders with 'cmd + shift + .',
+navigate to .dbt folder and open up profiles.yml
+# Find the name of the dbt project you just initialized
+# Change the path to the absolute path of your duckdb database file, in quotes
+# Add extensions under dev mapping (same indentation as path)
+
+dbt_duckdb_intro:
+  outputs:
+    dev:
+      type: duckdb
+      path: '/Users/janaismail/workspace/active/de-2025/demos-codealongs/07-09_duckdb_intro/data/dbt_db.duckdb'
+      extensions:
+        - httpfs
+        - parquet
+      threads: 1
+
+    prod:
+      type: duckdb
+      path: prod.duckdb
+      threads: 4
+
+  target: dev
+
+# Run terminal commands:
+    * cd dbt_duckdb_intro
+    * dbt debug
+# Should output 'Connection test: [OK connection ok]' in terminal
+
+# Get rid of everything in models folder
+# Add models/marts and models/staging folders
+# Go to dbt_project.yml, and change models config
+
+models:
+  dbt_duckdb_intro:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+
+*** staging sql scripts: 1 table 1 file ***
+
+# Define the cleaning/transformation SQL in models/staging/stg_transactions.sql
+# Inside the top level of the dbt_project directory in the terminal, run:
+    dbt run
+# Should output 'Completed successfully', and you can verify
+in DataGrip that a stg_transactions view is created in the database
+
+# Create models/marts/customer_summary.sql scripts
+    # This is where gold/business aggregations will go
+
+### Testing
+# In both models/staging and models/marts folders, create a schema.yml file
+# Define the columns and tests for each column, i.e. 'not null' or 'unique'
+# In the terminal, run
+    dbt test
+
+***dbt visuals***
+# Run 
+    dbt docs generate
+# then
+    dbt docs serve
+# Takes you to localhost:8080, where you are provided with an explorer
+for the dbt pipeline
+    - Can see the database - views, tables created
+    - A visual data dictionary
+    - Source code, documentation ready for you

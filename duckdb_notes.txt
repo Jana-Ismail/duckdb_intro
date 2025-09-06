@@ -52,3 +52,25 @@
 # File vs :memory:
     # Both low-overhead
     # :memory: is harder to trouble-shoot because you don't have the tables or forensics
+
+    # When performing the timed test with nppes_data (8+ million rows):
+    - Daniel's CREATE TABLE nppes AS times were ~60s min for :memory:, ~60s for .duckdb file, ~ 80s - which was not entirely expected
+    - I ran the same tests on my machine, and it was ~31s :memory:, ~112 s for db file, and 107s in DataGrip
+    **** To read SELECT * and output all 8 million rows, took 4s on Daniel's machine and 12s on mine ****
+
+# For DuckDB SQL, instead of 'autoincrement',
+# create a sequence with 'CREATE SEQUENCE IF NOT EXISTS sequence_name START 1',
+# then use nextval('sequence_name') in table creation
+    CREATE SEQUENCE IF NOT EXISTS warmups_id_seq START 1
+    CREATE TABLE warmups(
+        warmup_id INTEGEGER DEFAULT nextval('warmups_id_seq') PRIMARY KEY,
+        ...
+    )
+
+# Write SQL in a .sql file in your code, then call that file with
+    
+    conn.execute(open('{path_to_sql_file}', 'r').read())
+
+    **kind of like calling a stored proc**
+
+    # This is how you can keep SQL out of your code

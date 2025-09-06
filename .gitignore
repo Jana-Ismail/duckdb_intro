@@ -2,7 +2,7 @@
 *.duckdb
 *.csv
 local_db.duckdb.wal
-*.sql
+src/*.sql
 *.sh
 # Byte-compiled / optimized / DLL files
 __pycache__/

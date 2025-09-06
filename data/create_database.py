@@ -1,15 +1,16 @@
 import duckdb
 
-def create_database():
-    db_path = 'data/local_db.duckdb'
+def create_database(db_path):
     conn = duckdb.connect(db_path)
 
-    transactions = conn.execute('select * from "data/transactions.csv"').fetchall()
+    transactions = conn.execute('select * from "data/transactions.parquet"').fetchall()
 
     print(transactions)
     return db_path
 
+def main():
+    db_path = 'data/local_db.duckdb'
+    create_database(db_path)
+
 if __name__ == "__main__":
-    print("Creating database...")
-    DB_PATH = create_database()
-    print(f"Database ready at: {DB_PATH}")
+    main()
