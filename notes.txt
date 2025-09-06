@@ -1,0 +1,54 @@
+## Intro to DuckDB Notes
+## DE 2025 Code-Along 07/09
+## Loom video ~30 mins important 
+
+# Database works same as something like a Postgres db
+
+# But, it is just a file (proprietary DuckDB file, not human-readable)
+
+# Configured in such a way, using columnar store and vectorization of the data
+# to do really fast reads on and really fast bulk inserts of data
+
+# Beauty of DuckDB is fast analytics
+# Able to read and print 50,000 rows in sub 1-second
+
+# Great for OLAP / analytical processing
+# Great for < 100GB
+# *Not* great for OLTP / transactional / frequent updates
+
+# Like SQLite, but more features
+# Kinda like Redis Cache
+# Kinda like Snowflake, but with extra features
+
+# Connecting to a DuckDB instance with .connect(file_path) creates it if it doesn't already exist
+
+# Keep SQL out of your code 99% of the time
+# With DuckDB, you are still not going to really use SQL in your code, but you can!
+    # Past SQLAlchemy things will still work with DuckDB
+    # But it is not necessarily bad practice to use SQL in code
+   
+    ** WHY IS THIS ? **
+        # Because DuckDB is embedded, as opposed to client-server like many database systems are
+        # DuckDB runs *in-process* inside your Python program (similar to SQLite)
+        # No separate server process listening for connections on a port...
+        # Therefore no way SQL injection attacks can occur over a network
+        # Queries don't typically depend on direct end-user input
+        # DuckDB is sandboxed (isolated so that it can access only certain resources, programs, and files within a computer system) in your program 
+        # (same concept as creating a Pandas dataframe and reading it in your program)
+
+    # Power comes from parallelization - get speed on large things because the bulk reads/writes
+    # can execute simultaneously
+
+    # Transactional writes are serial, so you lose that power/speed
+
+# In-memory with :memory:
+    # Create a whole DuckDB system/instance without creating a file
+    # Runs the analytics without persistent data
+    # Supposedly much faster, but when timed in code-along, they were both fast and pretty similar
+
+    # No tables or anything - everything goes away after program finishes running
+    # Have a Parquet output to look at/verify/validate
+
+# File vs :memory:
+    # Both low-overhead
+    # :memory: is harder to trouble-shoot because you don't have the tables or forensics
