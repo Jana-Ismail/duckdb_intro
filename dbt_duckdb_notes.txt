@@ -1,6 +1,20 @@
 # pip-tools for keeping you environment clean
     pip sync to remove any dependencies you're not using
 
+# dbt commands
+    * dbt init
+    * dbt debug
+    * dbt run
+        * dbt run --SELECT stg_* 
+        * dbt run --SELECT stg_{file_name}
+        * dbt run --SELECT models.staging
+        * dbt run --SELECT tag:{tag_name}
+        * dbt run --SELECT source:{source_name}
+    * dbt test
+    * dbt docs generate
+    * dbt docs serve
+
+
 # dbt is a transformation tool ('data build tool')
 
 # new paradigm we are learning - Mediallion Architecture

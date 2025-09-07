@@ -1,0 +1,53 @@
+***Jinja is a Python-based templating language***
+- For embedding dynamic content and logic within static templates
+- Create templates with placeholders, Jinja substitutes placeholders
+for corresponding values before rendering
+- Jinja + dbt enables you to embed logic into your SQL
+    - Allows dbt to dynamically resolve a table name at runtime, for example
+    - Can use conditionals and loops inside your SQL
+    - Can inject variables or reusable patterns into your SQL/transformation logic
+
+# In dbt project folder in models/staging, create a sources.yml file
+
+# sources.yml 
+- Validation on incoming raw data
+- Run on database file where the raw data is coming from
+- Defines *external* raw data tables that dbt models depend on (upstream)
+- Reference upstream tables with {{ source() }}
+- Use when you want to declare where your raw inputs come from
+    # Otherwise you would have to hardcode the table name all over your SQL
+# schema.yml
+- Making sure your staging transformation is keeping data integrity
+- Run on the view created in silver staging before moving on to gold
+
+    **key difference**
+        * schema.yml -> metadata + tests for dbt models you build
+        * sources.yml -> metadata + tests for external raw tables you depend on
+
+# Use {{ config() }} to make specifications on SQL scripts
+
+# Macros => reusable SQL snippets
+
+# Jinja is used to declare dependencies ('this model depends on this external table source', 'this model depends on this model');
+# Then dbt executes models layer by layer, in order of these dependencies
+# So... Jinja indirectly helps determine the order of operations in the dbt run
+    - helps with 'lineage tracking'
+    - dbt's DAG will abstract dependencies from sources.yml
+
+# Jinja SQL script syntax
+
+    {{ config (
+        materialized='table',
+        tags=['marts', 'customer'],
+        indexes=[
+            'columns': ['customer_id', 'unique': true]
+        ]
+    )}}
+
+    SELECT
+        ...
+    FROM {{ ref(stg_transactions') }}
+
+    SELECT
+        ...
+    FROM {{ source('main', 'transactions') }}

@@ -23,4 +23,5 @@
     - Add some data validation with dbt test
     - Spin up dbt docs
 
-8. Introduction to Jinja
+8. Introduction to Jinja templating, sources.yml, dependency + dependency lineage, sources.yml vs. schema.yml validation and tests, mention of macros
+    - {{ config() }}, {{ source() }}, {{ ref() }}
