@@ -1,3 +1,7 @@
+{{ config(
+    materialized='view'
+) }}
+
 select
     -- Add any column cleaning/renaming
     transaction_id,
@@ -14,4 +18,4 @@ select
     -- Metadata
     current_timestamp as _loaded_at
 
-from main.transactions
+from {{ source('main', 'transactions') }}

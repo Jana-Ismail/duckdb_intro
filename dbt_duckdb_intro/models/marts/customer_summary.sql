@@ -1,3 +1,11 @@
+{{ config(
+    materialized='table',
+    tags=['marts', 'customer', 'daily'],
+    indexes=[
+        {'columns': ['customer_id'], 'unique': true}
+    ]
+) }}
+
 SELECT
     customer_id,
     count(*) as total_transactions,
@@ -12,6 +20,7 @@ SELECT
     count(case when transaction_type = 'credit' then 1 end) as credit_count,
     count(case when transaction_type = 'debit' then 1 end) as debit_count
 
-from main.stg_transactions
+from {{ ref('stg_transactions') }}
 group by customer_id
+order by total_amount desc
 
